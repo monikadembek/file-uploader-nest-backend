@@ -5,21 +5,26 @@ import {
   UploadedFile,
   BadRequestException,
 } from '@nestjs/common';
-import { FileUploadService } from './file-upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { basename, extname } from 'path';
 import { sanitizeFileName } from './file-utils';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import {
+  ALLOWED_IMAGE_MIME_TYPES,
+  MAX_FILE_SIZE,
+  UPLOADS_LOCAL_FOLDER,
+} from './constants';
 
 @Controller('files')
 export class FileUploadController {
-  constructor(private readonly fileUploadService: FileUploadService) {}
+  constructor(private readonly cloudinaryService: CloudinaryService) {}
 
-  @Post('server-upload')
+  @Post('server-image-upload')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './uploads/images',
+        destination: UPLOADS_LOCAL_FOLDER,
         filename: (req, file, callback) => {
           const fileExtension = extname(file.originalname).toLowerCase();
           const originalName = basename(file.originalname, fileExtension);
@@ -29,10 +34,10 @@ export class FileUploadController {
         },
       }),
       limits: {
-        fileSize: 3 * 1024 * 1024,
+        fileSize: MAX_FILE_SIZE,
       },
       fileFilter: (req, file, callback) => {
-        const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        const allowedMimeTypes = ALLOWED_IMAGE_MIME_TYPES;
         if (!allowedMimeTypes.includes(file.mimetype)) {
           return callback(
             new BadRequestException(
@@ -59,6 +64,42 @@ export class FileUploadController {
       originalName: file.originalname,
       size: file.size,
       mimetype: file.mimetype,
+    };
+  }
+
+  @Post('cloudinary-image-upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: MAX_FILE_SIZE,
+      },
+      fileFilter: (req, file, callback) => {
+        const allowedMimeTypes = ALLOWED_IMAGE_MIME_TYPES;
+        if (!allowedMimeTypes.includes(file.mimetype)) {
+          return callback(
+            new BadRequestException(
+              'Invalid file type, only image files allowed',
+            ),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    console.log('file extracted from request: ', file);
+
+    const result = await this.cloudinaryService.uploadImageStream(file);
+    console.log('result', result);
+
+    return {
+      message: 'File uploaded successfully',
+      imagePublicId: result.public_id,
+      url: result.secure_url,
     };
   }
 }
