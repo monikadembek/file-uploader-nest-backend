@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileSizeValidationPipe } from './pipes/file-size-validation.pipe';
 import { diskStorage } from 'multer';
 import { basename, extname } from 'path';
 import { sanitizeFileName } from './file-utils';
@@ -16,11 +15,11 @@ import { sanitizeFileName } from './file-utils';
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
-  @Post('upload')
+  @Post('server-upload')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './uploads',
+        destination: './uploads/images',
         filename: (req, file, callback) => {
           const fileExtension = extname(file.originalname).toLowerCase();
           const originalName = basename(file.originalname, fileExtension);
@@ -47,7 +46,7 @@ export class FileUploadController {
     }),
   )
   uploadFile(
-    @UploadedFile(new FileSizeValidationPipe())
+    @UploadedFile()
     file: Express.Multer.File,
   ) {
     if (!file) {
