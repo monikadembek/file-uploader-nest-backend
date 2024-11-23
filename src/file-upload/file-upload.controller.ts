@@ -1,9 +1,13 @@
 import {
   Controller,
   Post,
+  Delete,
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Query,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -101,5 +105,25 @@ export class FileUploadController {
       imagePublicId: result.public_id,
       url: result.secure_url,
     };
+  }
+
+  @Delete('cloudinary-image')
+  async deleteCloudinaryFile(@Query('publicId') publicId: string) {
+    if (!publicId) {
+      throw new BadRequestException('No valid image id provided');
+    }
+
+    try {
+      const response: { result: string } =
+        await this.cloudinaryService.deleteFile(publicId);
+      console.log('response: ', response);
+      return {
+        message: response.result,
+        publicId,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
