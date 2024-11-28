@@ -8,6 +8,7 @@ import {
   Query,
   HttpException,
   HttpStatus,
+  Get,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -105,6 +106,22 @@ export class FileUploadController {
       imagePublicId: result.public_id,
       url: result.secure_url,
     };
+  }
+
+  @Get('cloudinary-image')
+  async getCloudinaryImagesByAssetFolder(
+    @Query('assetFolder') assetFolder: string,
+  ) {
+    if (!assetFolder) {
+      throw new BadRequestException('No valid folder name provided');
+    }
+
+    try {
+      return await this.cloudinaryService.getImagesByAssetFolder(assetFolder);
+    } catch (error) {
+      console.log('error controller: ', error);
+      throw new HttpException(error.message, error.http_code);
+    }
   }
 
   @Delete('cloudinary-image')
