@@ -14,7 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { basename, extname } from 'path';
 import { sanitizeFileName } from './file-utils';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import {
   ALLOWED_IMAGE_MIME_TYPES,
   MAX_FILE_SIZE,

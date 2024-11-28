@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { v2 as cloudinary, ResourceApiResponse } from 'cloudinary';
 import { CloudinaryResponse } from './cloudinary-response';
-import { UPLOADS_CLOUDINARY_FOLDER } from 'src/file-upload/constants';
+import { UPLOADS_CLOUDINARY_FOLDER } from '../file-upload/constants';
 
 @Injectable()
 export class CloudinaryService {
