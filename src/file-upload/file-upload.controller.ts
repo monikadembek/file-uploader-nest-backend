@@ -1,15 +1,20 @@
 import {
   Controller,
   Post,
+  Delete,
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Query,
+  HttpException,
+  HttpStatus,
+  Get,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { basename, extname } from 'path';
 import { sanitizeFileName } from './file-utils';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import {
   ALLOWED_IMAGE_MIME_TYPES,
   MAX_FILE_SIZE,
@@ -101,5 +106,41 @@ export class FileUploadController {
       imagePublicId: result.public_id,
       url: result.secure_url,
     };
+  }
+
+  @Get('cloudinary-image')
+  async getCloudinaryImagesByAssetFolder(
+    @Query('assetFolder') assetFolder: string,
+  ) {
+    if (!assetFolder) {
+      throw new BadRequestException('No valid folder name provided');
+    }
+
+    try {
+      return await this.cloudinaryService.getImagesByAssetFolder(assetFolder);
+    } catch (error) {
+      console.log('error controller: ', error);
+      throw new HttpException(error.message, error.http_code);
+    }
+  }
+
+  @Delete('cloudinary-image')
+  async deleteCloudinaryFile(@Query('publicId') publicId: string) {
+    if (!publicId) {
+      throw new BadRequestException('No valid image id provided');
+    }
+
+    try {
+      const response: { result: string } =
+        await this.cloudinaryService.deleteFile(publicId);
+      console.log('response: ', response);
+      return {
+        message: response.result,
+        publicId,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
