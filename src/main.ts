@@ -1,10 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('port');
+  const env = configService.get<string>('nodeEnv');
+  const clientOrigin = configService.get<string>('clientOrigin');
+
   app.enableCors({
-    origin: 'http://localhost:4200',
+    origin: clientOrigin,
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: [
@@ -15,7 +22,7 @@ async function bootstrap() {
       'Authorization',
     ],
   });
-  await app.listen(3000);
-  console.log(`App listens on port: 3000`);
+  await app.listen(port);
+  console.log(`App listens on port: ${port} | environment: ${env}`);
 }
 bootstrap();
