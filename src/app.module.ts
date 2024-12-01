@@ -6,8 +6,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ConfigModule } from '@nestjs/config';
-import { configuration } from 'src/config/configuration';
-import { validationSchema } from 'src/config/validation';
+import { configuration } from './config/configuration';
+import { validationSchema } from './config/validation';
 
 @Module({
   imports: [
