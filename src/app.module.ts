@@ -15,7 +15,7 @@ import { validationSchema } from '../config/validation';
       envFilePath:
         process.env.NODE_ENV === 'development'
           ? `${process.cwd()}/config/env/${process.env.NODE_ENV}.env`
-          : `${__dirname}/config/env/${process.env.NODE_ENV}.env`,
+          : `src/config/env/${process.env.NODE_ENV}.env`,
       isGlobal: true,
       load: [configuration],
       validationSchema,
