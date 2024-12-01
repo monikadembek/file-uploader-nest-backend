@@ -10,6 +10,8 @@ async function bootstrap() {
   const env = configService.get<string>('nodeEnv');
   const clientOrigin = configService.get<string>('clientOrigin');
 
+  app.setGlobalPrefix('api');
+
   app.enableCors({
     origin: clientOrigin,
     credentials: true,
