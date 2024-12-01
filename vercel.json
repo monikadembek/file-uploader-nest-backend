@@ -21,21 +21,6 @@
         "CONNECT",
         "TRACE"
       ]
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "src/main.ts",
-      "methods": [
-        "GET",
-        "POST",
-        "PUT",
-        "PATCH",
-        "DELETE",
-        "OPTIONS",
-        "HEAD",
-        "CONNECT",
-        "TRACE"
-      ]
     }
   ]
 }
