@@ -26,5 +26,6 @@ async function bootstrap() {
   });
   await app.listen(port);
   console.log(`App listens on port: ${port} | environment: ${env}`);
+  console.log(`${process.cwd()}/config/env/${process.env.NODE_ENV}.env`);
 }
 bootstrap();
