@@ -20,9 +20,10 @@ import { validationSchema } from '../config/validation';
       load: [configuration],
       validationSchema,
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..'),
-    }),
+    // commented out bc it is no longer required as Heroku won't allow uploading files to server
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..'),
+    // }),
     FileUploadModule,
     CloudinaryModule,
   ],
