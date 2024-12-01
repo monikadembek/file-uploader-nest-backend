@@ -6,13 +6,16 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ConfigModule } from '@nestjs/config';
-import { configuration } from './config/configuration';
-import { validationSchema } from './config/validation';
+import { configuration } from '../config/configuration';
+import { validationSchema } from '../config/validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/config/env/${process.env.NODE_ENV}.env`,
+      envFilePath:
+        process.env.NODE_ENV === 'development'
+          ? `${process.cwd()}/config/env/${process.env.NODE_ENV}.env`
+          : `${__dirname}/config/env/${process.env.NODE_ENV}.env`,
       isGlobal: true,
       load: [configuration],
       validationSchema,
