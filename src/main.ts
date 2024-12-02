@@ -12,7 +12,7 @@ async function bootstrap() {
 
   // commented out due to errors during build on Vercel
   // check how to fix it
-  app.setGlobalPrefix('api');
+  // app.setGlobalPrefix('api');
 
   app.enableCors({
     origin: clientOrigin || '*',
