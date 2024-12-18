@@ -10,12 +10,14 @@ async function bootstrap() {
   const env = configService.get<string>('nodeEnv');
   const clientOrigin = configService.get<string>('clientOrigin');
 
+  const origin = env === 'development' ? '*' : clientOrigin;
+
   // commented out due to errors during build on Vercel
   // check how to fix it
   // app.setGlobalPrefix('api');
 
   app.enableCors({
-    origin: clientOrigin || '*',
+    origin,
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: [
